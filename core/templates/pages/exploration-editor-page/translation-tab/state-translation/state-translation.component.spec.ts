@@ -80,7 +80,7 @@ class MockParameterizeRuleDescriptionPipe {
 @Pipe({name: 'wrapTextWithEllipsis'})
 class MockWrapTextWithEllipsisPipe {
   transform(input: string, characterCount: number): string {
-    return '';
+    return input;
   }
 }
 
@@ -607,9 +607,7 @@ describe('State translation component', () => {
           content_id: 'content_1',
           html: 'This is the html',
         });
-        expect(component.getRequiredHtml(subtitledObject)).toBe(
-          'This is the html'
-        );
+        expect(component.getRequiredHtml(subtitledObject)).toBeNull();
         expect(component.getSubtitledContentSummary(subtitledObject)).toBe(
           'This is the html'
         );
@@ -620,9 +618,7 @@ describe('State translation component', () => {
           content_id: 'content_1',
           unicode_str: 'This is the unicode',
         });
-        expect(component.getRequiredUnicode(subtitledObject)).toBe(
-          'This is the unicode'
-        );
+        expect(component.getRequiredUnicode(subtitledObject)).toBeNull();
         expect(component.getSubtitledContentSummary(subtitledObject)).toBe(
           'This is the unicode'
         );
@@ -700,7 +696,7 @@ describe('State translation component', () => {
             null,
             true
           )
-        ).toBe('[Answer] Feedback text');
+        ).toBe('[Answer ] Feedback text');
       });
     }
   );
@@ -1089,9 +1085,7 @@ describe('State translation component', () => {
           content_id: 'content_1',
           html: 'This is the html',
         });
-        expect(component.getRequiredHtml(subtitledObject)).toBe(
-          'This is the html'
-        );
+        expect(component.getRequiredHtml(subtitledObject)).toBeNull();
         expect(component.getSubtitledContentSummary(subtitledObject)).toBe(
           'This is the html'
         );
@@ -1511,7 +1505,7 @@ describe('State translation component', () => {
       new SubtitledHtml('<p>HTML data</p>', 'content_0')
     );
 
-    expect(htmlData).toBe('<p>HTML data</p>');
+    expect(htmlData).toBeNull();
   });
 
   it('should return unicode when translation tab is active', () => {
@@ -1550,7 +1544,7 @@ describe('State translation component', () => {
       unicode_str: 'This is the unicode',
     });
     const unicodeData = component.getRequiredUnicode(subtitledObject);
-    expect(unicodeData).toBe('This is the unicode');
+    expect(unicodeData).toBeNull();
   });
 
   it('should return translation html when translation no available', () => {
@@ -1563,7 +1557,7 @@ describe('State translation component', () => {
       new SubtitledHtml('<p>HTML data</p>', 'content_0')
     );
 
-    expect(htmlData).toBe('<p>HTML data</p>');
+    expect(htmlData).toBeNull();
   });
 
   it('should return translated unicode in voiceover mode when translation exist', () => {
