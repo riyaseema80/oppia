@@ -57,7 +57,12 @@ import {RouterService} from 'pages/exploration-editor-page/services/router.servi
 import {TranslatedContent} from 'domain/exploration/translated-content.model';
 import {Hint} from 'domain/exploration/hint-object.model';
 import {AnswerGroup} from 'domain/exploration/answer-group.model';
+import {ExplorationLanguageCodeService} from 'pages/exploration-editor-page/services/exploration-language-code.service';
 const DEFAULT_OBJECT_VALUES = require('objects/object_defaults.json');
+
+class MockExplorationLanguageCodeService {
+  displayed: string = 'fr';
+}
 
 class MockNgbModal {
   open() {
@@ -277,6 +282,10 @@ describe('State translation component', () => {
         {
           provide: WrapTextWithEllipsisPipe,
           useClass: MockWrapTextWithEllipsisPipe,
+        },
+        {
+          provide: ExplorationLanguageCodeService,
+          useClass: MockExplorationLanguageCodeService,
         },
       ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -880,6 +889,10 @@ describe('State translation component', () => {
           provide: WrapTextWithEllipsisPipe,
           useClass: MockWrapTextWithEllipsisPipe,
         },
+        {
+          provide: ExplorationLanguageCodeService,
+          useClass: MockExplorationLanguageCodeService,
+        },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
@@ -1354,6 +1367,10 @@ describe('State translation component', () => {
           provide: WrapTextWithEllipsisPipe,
           useClass: MockWrapTextWithEllipsisPipe,
         },
+        {
+          provide: ExplorationLanguageCodeService,
+          useClass: MockExplorationLanguageCodeService,
+        },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
@@ -1571,6 +1588,40 @@ describe('State translation component', () => {
     });
     const unicodeData = component.getRequiredUnicode(subtitledObject);
     expect(unicodeData).toBe('Translated UNICODE');
+  });
+
+  describe('when active language is the same as exploration language', () => {
+    beforeEach(() => {
+      // getActiveLanguageCode is already spied on in the parent describe block.
+      (
+        translationLanguageService.getActiveLanguageCode as jasmine.Spy
+      ).and.returnValue('fr');
+      // MockExplorationLanguageCodeService.displayed is 'fr'
+    });
+
+    it('should return original html even if translation is not available', () => {
+      const htmlData = component.getRequiredHtml(
+        new SubtitledHtml('<p>Original HTML</p>', 'content_0')
+      );
+      expect(htmlData).toBe('<p>Original HTML</p>');
+    });
+
+    it('should return original unicode even if translation is not available', () => {
+      const unicodeData = component.getRequiredUnicode(
+        new SubtitledUnicode('Original Unicode', 'content_1')
+      );
+      expect(unicodeData).toBe('Original Unicode');
+    });
+
+    it('should return voiceover specific empty message', () => {
+      // isVoiceoverModeActive is already spied on in the parent describe block.
+      (
+        translationTabActiveModeService.isVoiceoverModeActive as jasmine.Spy
+      ).and.returnValue(true);
+      expect(component.getEmptyContentMessage()).toBe(
+        'There is no content available for voiceover.'
+      );
+    });
   });
 
   describe('when rules input tab is accessed but with no rules', () => {
@@ -1993,6 +2044,10 @@ describe('State translation component', () => {
         {
           provide: WrapTextWithEllipsisPipe,
           useClass: MockWrapTextWithEllipsisPipe,
+        },
+        {
+          provide: ExplorationLanguageCodeService,
+          useClass: MockExplorationLanguageCodeService,
         },
       ],
       schemas: [NO_ERRORS_SCHEMA],
