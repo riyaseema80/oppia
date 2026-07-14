@@ -247,8 +247,12 @@ def run_tests(args: argparse.Namespace) -> Tuple[List[bytes], int]:
                     # non-unicode strings.
                     line = line.encode('utf-8')  # pragma: no cover
                 output_lines.append(line.rstrip())
-                # Replaces non-ASCII characters with '?'.
-                common.write_stdout_safe(line.decode('ascii', errors='replace'))
+                # Replaces non-ASCII characters with '?' and colorizes
+                # the output based on auto-detected log type (errors
+                # in red, warnings in yellow).
+                decoded_line = line.decode(
+                    'ascii', errors='replace').rstrip()
+                common.log_to_terminal(decoded_line)
             # The poll() method returns None while the process is running,
             # otherwise it returns the return code of the process (an int).
             if proc.poll() is not None:
